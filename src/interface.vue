@@ -120,6 +120,10 @@ const props = defineProps({
   custom_unique_message: {
     type: String,
     default: null
+  },
+  allow_duplicates: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -135,56 +139,24 @@ const sourceValue = ref('');
 const isEditing = ref(false);
 const cachedValueBeforeEdit = ref('');
 
-const slugPattern = /^[\/]?[a-z0-9]+(?:[-\/][a-z0-9]+)*\/?$/;
-
 // Add a function to check if slug is unique in the collection
 const checkSlugUniqueness = async (slug: string): Promise<boolean> => {
   if (!props.collection || !slug) return true;
 
   try {
-    // Check if we're working with a translation collection (name ends with _translations)
-    const isTranslationCollection = props.collection.endsWith('_translations');
+    // Regular uniqueness check for all collections
+    const response = await api.get(`/items/${props.collection}`, {
+      params: {
+        filter: {
+          [props.field]: { _eq: slug },
+          // Don't check against the current item
+          ...(props.primaryKey && { id: { _neq: props.primaryKey } })
+        },
+        limit: 1
+      }
+    });
 
-    // If it's a translation collection, handle differently
-    if (isTranslationCollection) {
-      const baseCollection = props.collection.replace('_translations', '');
-
-      // Get the current item to find its parent ID
-      if (!props.primaryKey) return true;
-
-      const currentItem = await api.get(`/items/${props.collection}/${props.primaryKey}`);
-      const parentId = currentItem?.data?.data?.[`${baseCollection}_id`];
-
-      if (!parentId) return true;
-
-      // Find any items with the same slug but different parent ID
-      const response = await api.get(`/items/${props.collection}`, {
-        params: {
-          filter: {
-            [props.field]: { _eq: slug },
-            [`${baseCollection}_id`]: { _neq: parentId },
-            ...(props.primaryKey && { id: { _neq: props.primaryKey } })
-          },
-          limit: 1
-        }
-      });
-
-      return response.data.data.length === 0;
-    } else {
-      // Regular uniqueness check for non-translation collections
-      const response = await api.get(`/items/${props.collection}`, {
-        params: {
-          filter: {
-            [props.field]: { _eq: slug },
-            // Don't check against the current item
-            ...(props.primaryKey && { id: { _neq: props.primaryKey } })
-          },
-          limit: 1
-        }
-      });
-
-      return response.data.data.length === 0;
-    }
+    return response.data.data.length === 0;
   } catch (error) {
     console.error('Error checking slug uniqueness:', error);
     return true; // In case of error, allow the slug to prevent blocking the user
@@ -209,23 +181,24 @@ const validateSlug = async () => {
     }
   }
 
-  // Modified regex pattern to allow multiple slashes and trailing slashes for hierarchical paths
-  const updatedSlugPattern = /^[\/]?[a-z0-9]+(?:[-\/][a-z0-9]+)*\/?$/;
+  // Modified regex pattern to allow full URLs with dots and hierarchical paths, including specific domains
+  const updatedSlugPattern = /^(https?:\/\/[a-zA-Z0-9][-a-zA-Z0-9.]*[a-zA-Z0-9](:[0-9]+)?(\.[a-zA-Z0-9][-a-zA-Z0-9.]*[a-zA-Z0-9])*(?:\/[a-zA-Z0-9]+(?:[-\/][a-zA-Z0-9]+)*\/?)?|[\/]?[a-zA-Z0-9]+(?:[-\/][a-zA-Z0-9]+)*\/?)$/i;
 
   if (!updatedSlugPattern.test(internalValue.value)) {
     isValid.value = false;
-    validationMessage.value = props.custom_format_message || 'Slug must contain only lowercase letters, numbers, hyphens, and forward slashes. It can start and end with a forward slash for paths.';
+    validationMessage.value = props.custom_format_message || 'Please enter a valid URL (e.g., https://cms.staging.piletilevi.ee/) or a valid slug with lowercase letters, numbers, hyphens, dots, and forward slashes.';
     emit('validation', false); // Emit validation failure
     return;
   }
-
-  // Check if slug is unique
-  const isUnique = await checkSlugUniqueness(internalValue.value);
-  if (!isUnique) {
-    isValid.value = false;
-    validationMessage.value = props.custom_unique_message || 'This slug is already in use. Please enter a unique slug.';
-    emit('validation', false); // Emit validation failure
-    return;
+  // Skip uniqueness check if allow_duplicates is true
+  if (!props.allow_duplicates) {
+    const isUnique = await checkSlugUniqueness(internalValue.value);
+    if (!isUnique) {
+      isValid.value = false;
+      validationMessage.value = props.custom_unique_message || 'This slug is already in use. Please enter a unique slug.';
+      emit('validation', false); // Emit validation failure
+      return;
+    }
   }
 
   isValid.value = true;

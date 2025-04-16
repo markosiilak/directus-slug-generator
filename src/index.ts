@@ -138,6 +138,31 @@ export default defineInterface({
       }
     },
     {
+      field: 'unique_collection',
+      name: 'Unique Collection',
+      type: 'string',
+      meta: {
+        width: 'half',
+        interface: 'system-collection',
+        options: {
+          allowNone: true
+        }
+      }
+    },
+    {
+      field: 'unique_field',
+      name: 'Unique Field',
+      type: 'string',
+      meta: {
+        width: 'half',
+        interface: 'system-field',
+        options: {
+          collectionField: 'unique_collection',
+          allowNone: true
+        }
+      }
+    },
+    {
       field: 'custom_unique_message',
       name: 'Custom Uniqueness Error Message',
       type: 'string',
@@ -147,6 +172,21 @@ export default defineInterface({
         options: {
           placeholder: 'This slug is already in use. Please enter a unique slug.'
         }
+      }
+    },
+    {
+      field: 'allow_duplicates',
+      name: 'Allow Duplicate Slugs',
+      type: 'boolean',
+      meta: {
+        width: 'half',
+        interface: 'boolean',
+        options: {
+          label: 'Allow duplicate slugs across collections'
+        }
+      },
+      schema: {
+        default_value: false
       }
     }
   ]
