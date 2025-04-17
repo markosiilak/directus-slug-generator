@@ -95,7 +95,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: 'Enter a slug...'
+    default: 'Enter a slug or url...'
   },
   collection: {
     type: String,
