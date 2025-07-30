@@ -1,5 +1,5 @@
 {
-  "name": "@directus-extension/slug-generator",
+  "name": "directus-slug-generator",
   "version": "1.0.0",
   "description": "Advanced slug generator interface for Directus CMS with auto-update functionality",
   "keywords": [
@@ -19,12 +19,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/directus-extension-slug-generator.git"
+    "url": "https://github.com/markosiilak/directus-slug-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/directus-extension-slug-generator/issues"
+    "url": "https://github.com/markosiilak/directus-slug-generator/issues"
   },
-  "homepage": "https://github.com/yourusername/directus-extension-slug-generator#readme",
+  "homepage": "https://github.com/markosiilak/directus-slug-generator#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
