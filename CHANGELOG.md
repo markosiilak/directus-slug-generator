@@ -1,3 +1,8 @@
+## [1.1.0] - 2025-08-08
+
+### Added
+- Version 1.1.0 release
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
