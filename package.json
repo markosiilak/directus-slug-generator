@@ -13,8 +13,8 @@
     "transliteration"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
+    "name": "Marko Siilak",
+    "email": "marko@siilak.com"
   },
   "license": "MIT",
   "repository": {
@@ -49,10 +49,10 @@
     "node": ">=16.0.0"
   },
   "peerDependencies": {
-    "@directus/extensions-sdk": "^9.0.0"
+    "@directus/extensions-sdk": "^15.0.0"
   },
   "devDependencies": {
-    "@directus/extensions-sdk": "^9.0.0",
+    "@directus/extensions-sdk": "^15.0.0",
     "typescript": "^4.9.0"
   }
 }

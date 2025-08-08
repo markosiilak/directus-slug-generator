@@ -16,8 +16,8 @@ Before publishing, update the following in `package.json`:
 ```json
 {
   "author": {
-    "name": "Your Real Name",
-    "email": "your.real.email@example.com"
+    "name": "Marko Siilak",
+    "email": "marko@siilak.com"
   },
   "repository": {
     "type": "git",
