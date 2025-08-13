@@ -1,6 +1,6 @@
-import { createSlug } from './transliteration';
-import { generateUUIDv4 } from './uuid';
-import { getProcessedFieldValue, type FieldName } from './fieldDetection';
+import { type FieldName, getProcessedFieldValue } from "./fieldDetection";
+import { createSlug } from "./transliteration";
+import { generateUUIDv4 } from "./uuid";
 
 export interface AutoUpdateConfig {
   sourceField: FieldName;
@@ -12,7 +12,7 @@ export interface AutoUpdateConfig {
   updateOnChange?: boolean;
   updateOnBlur?: boolean;
   updateOnFocus?: boolean;
-  generationMode?: 'slug' | 'uuid';
+  generationMode?: "slug" | "uuid";
 }
 
 export interface AutoUpdateResult {
@@ -33,15 +33,15 @@ export class AutoUpdater {
 
   constructor(config: AutoUpdateConfig) {
     this.config = {
-      separator: '-',
+      separator: "-",
       lowercase: true,
       autoUpdate: true,
       preserveExisting: false,
       updateOnChange: true,
       updateOnBlur: false,
       updateOnFocus: false,
-      generationMode: 'slug',
-      ...config
+      generationMode: "slug",
+      ...config,
     };
   }
 
@@ -61,11 +61,11 @@ export class AutoUpdater {
     if (this.config.updateOnChange) {
       this.addChangeListener(sourceElement);
     }
-    
+
     if (this.config.updateOnBlur) {
       this.addBlurListener(sourceElement);
     }
-    
+
     if (this.config.updateOnFocus) {
       this.addFocusListener(sourceElement);
     }
@@ -91,7 +91,7 @@ export class AutoUpdater {
         oldValue: null,
         newValue: null,
         sourceValue: null,
-        error: 'Update already in progress'
+        error: "Update already in progress",
       };
     }
 
@@ -100,27 +100,27 @@ export class AutoUpdater {
     try {
       const sourceValue = getProcessedFieldValue(this.config.sourceField);
       const targetElement = this.findTargetElement();
-      
+
       if (!targetElement) {
         return {
           success: false,
           oldValue: null,
           newValue: null,
           sourceValue,
-          error: `Target field "${this.config.targetField}" not found`
+          error: `Target field "${this.config.targetField}" not found`,
         };
       }
 
       const oldValue = this.getFieldValue(targetElement);
-      
+
       // Check if we should preserve existing value
-      if (this.config.preserveExisting && oldValue && oldValue.trim() !== '') {
+      if (this.config.preserveExisting && oldValue && oldValue.trim() !== "") {
         return {
           success: true,
           oldValue,
           newValue: oldValue,
           sourceValue,
-          error: 'Preserving existing value'
+          error: "Preserving existing value",
         };
       }
 
@@ -131,27 +131,27 @@ export class AutoUpdater {
           oldValue,
           newValue: oldValue,
           sourceValue,
-          error: 'Source value unchanged'
+          error: "Source value unchanged",
         };
       }
 
       let newValue: string | null = null;
-      
-      if (this.config.generationMode === 'uuid') {
+
+      if (this.config.generationMode === "uuid") {
         newValue = generateUUIDv4();
         this.setFieldValue(targetElement, newValue);
-        this.lastSourceValue = '__uuid__';
+        this.lastSourceValue = "__uuid__";
       } else {
         if (sourceValue) {
           const slugOptions = {
-            separator: this.config.separator || '-',
-            lowercase: this.config.lowercase !== false
+            separator: this.config.separator || "-",
+            lowercase: this.config.lowercase !== false,
           };
           newValue = createSlug(sourceValue, slugOptions);
           this.setFieldValue(targetElement, newValue);
           this.lastSourceValue = sourceValue;
         } else {
-          this.setFieldValue(targetElement, '');
+          this.setFieldValue(targetElement, "");
           this.lastSourceValue = null;
         }
       }
@@ -160,16 +160,15 @@ export class AutoUpdater {
         success: true,
         oldValue,
         newValue,
-        sourceValue
+        sourceValue,
       };
-
     } catch (error) {
       return {
         success: false,
         oldValue: null,
         newValue: null,
         sourceValue: null,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     } finally {
       this.isUpdating = false;
@@ -189,7 +188,7 @@ export class AutoUpdater {
       `[data-field="${this.config.sourceField}"] textarea`,
       `[data-field="${this.config.sourceField}"] .v-input__input`,
       `[data-field="${this.config.sourceField}"] .v-textarea__input`,
-      `[data-field="${this.config.sourceField}"] .v-field__input`
+      `[data-field="${this.config.sourceField}"] .v-field__input`,
     ];
 
     for (const selector of selectors) {
@@ -213,7 +212,7 @@ export class AutoUpdater {
       `[data-field="${this.config.targetField}"] textarea`,
       `[data-field="${this.config.targetField}"] .v-input__input`,
       `[data-field="${this.config.targetField}"] .v-textarea__input`,
-      `[data-field="${this.config.targetField}"] .v-field__input`
+      `[data-field="${this.config.targetField}"] .v-field__input`,
     ];
 
     for (const selector of selectors) {
@@ -228,11 +227,14 @@ export class AutoUpdater {
    * Gets the value from a field element
    */
   private getFieldValue(element: Element): string | null {
-    if (element.getAttribute('contenteditable') === 'true') {
+    if (element.getAttribute("contenteditable") === "true") {
       return element.textContent;
     } else if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
       return element.value;
-    } else if (element.classList.contains('v-input__input') || element.classList.contains('v-textarea__input')) {
+    } else if (
+      element.classList.contains("v-input__input") ||
+      element.classList.contains("v-textarea__input")
+    ) {
       return (element as HTMLInputElement).value;
     }
     return null;
@@ -242,16 +244,19 @@ export class AutoUpdater {
    * Sets the value of a field element
    */
   private setFieldValue(element: Element, value: string): void {
-    if (element.getAttribute('contenteditable') === 'true') {
+    if (element.getAttribute("contenteditable") === "true") {
       element.textContent = value;
     } else if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
       element.value = value;
-    } else if (element.classList.contains('v-input__input') || element.classList.contains('v-textarea__input')) {
+    } else if (
+      element.classList.contains("v-input__input") ||
+      element.classList.contains("v-textarea__input")
+    ) {
       (element as HTMLInputElement).value = value;
     }
 
     // Trigger input event to notify Directus of the change
-    const inputEvent = new Event('input', { bubbles: true });
+    const inputEvent = new Event("input", { bubbles: true });
     element.dispatchEvent(inputEvent);
   }
 
@@ -263,15 +268,15 @@ export class AutoUpdater {
       setTimeout(() => this.performUpdate(), 100);
     };
 
-    element.addEventListener('input', handleChange);
-    element.addEventListener('change', handleChange);
+    element.addEventListener("input", handleChange);
+    element.addEventListener("change", handleChange);
   }
 
   /**
    * Adds blur event listener to source element
    */
   private addBlurListener(element: Element): void {
-    element.addEventListener('blur', () => {
+    element.addEventListener("blur", () => {
       setTimeout(() => this.performUpdate(), 100);
     });
   }
@@ -280,7 +285,7 @@ export class AutoUpdater {
    * Adds focus event listener to source element
    */
   private addFocusListener(element: Element): void {
-    element.addEventListener('focus', () => {
+    element.addEventListener("focus", () => {
       setTimeout(() => this.performUpdate(), 100);
     });
   }
@@ -309,13 +314,13 @@ export function createAutoUpdater(config: AutoUpdateConfig): AutoUpdater {
 export async function autoUpdateField(
   sourceField: FieldName,
   targetField: FieldName,
-  options: Partial<AutoUpdateConfig> = {}
+  options: Partial<AutoUpdateConfig> = {},
 ): Promise<AutoUpdateResult> {
   const updater = createAutoUpdater({
     sourceField,
     targetField,
-    ...options
+    ...options,
   });
-  
+
   return updater.update();
-} 
+}

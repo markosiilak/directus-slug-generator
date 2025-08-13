@@ -1,270 +1,272 @@
-import { defineInterface } from '@directus/extensions-sdk';
-import InterfaceComponent from './interface.vue';
+import { defineInterface } from "@directus/extensions-sdk";
+
+import InterfaceComponent from "./interface.vue";
 
 export default defineInterface({
-  id: 'slug-generator',
-  name: 'Slug Generator',
-  icon: 'link',
-  description: 'Generate and validate a slug from another field',
+  id: "slug-generator",
+  name: "Slug Generator",
+  icon: "link",
+  description: "Generate and validate a slug from another field",
   component: InterfaceComponent,
-  types: ['string'],
-  group: 'standard',
+  types: ["string"],
+  group: "standard",
   options: [
     {
-      field: 'generation_mode',
-      name: 'Generation Mode',
-      type: 'string',
+      field: "generation_mode",
+      name: "Generation Mode",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'select-dropdown',
+        width: "half",
+        interface: "select-dropdown",
         options: {
           choices: [
-            { text: 'Slug', value: 'slug' },
-            { text: 'UUID v4', value: 'uuid' }
-          ]
-        }
+            { text: "Slug", value: "slug" },
+            { text: "UUID v4", value: "uuid" },
+          ],
+        },
       },
       schema: {
-        default_value: 'slug'
-      }
+        default_value: "slug",
+      },
     },
     {
-      field: 'select_collection',
-      name: 'Source Collection',
-      type: 'string',
+      field: "select_collection",
+      name: "Source Collection",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'system-collection',
+        width: "half",
+        interface: "system-collection",
         options: {
           allowPrimaryKey: false,
           allowNone: false,
-          includeCollections: ['translations']
-        }
-      }
+          includeCollections: ["translations"],
+        },
+      },
     },
     {
-      field: 'status_field',
-      name: 'Status Field',
-      type: 'string',
+      field: "status_field",
+      name: "Status Field",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'system-field',
+        width: "half",
+        interface: "system-field",
         options: {
-          collectionField: 'select_collection',
+          collectionField: "select_collection",
           allowPrimaryKey: false,
           allowNone: false,
           fieldFilter: {
-            type: ['string']
-          }
-        }
-      }
+            type: ["string"],
+          },
+        },
+      },
     },
     {
-      field: 'auto',
-      name: 'Auto Generate',
-      type: 'boolean',
+      field: "auto",
+      name: "Auto Generate",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Generate slug automatically'
-        }
+          label: "Generate slug automatically",
+        },
       },
       schema: {
-        default_value: true
-      }
+        default_value: true,
+      },
     },
     {
-      field: 'required',
-      name: 'Required',
-      type: 'boolean',
+      field: "required",
+      name: "Required",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Slug is required'
-        }
+          label: "Slug is required",
+        },
       },
       schema: {
-        default_value: true
-      }
+        default_value: true,
+      },
     },
     {
-      field: 'separator',
-      name: 'Separator',
-      type: 'string',
+      field: "separator",
+      name: "Separator",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'select-dropdown',
+        width: "half",
+        interface: "select-dropdown",
         options: {
           choices: [
-            { text: 'Hyphen (-)', value: '-' },
-            { text: 'Underscore (_)', value: '_' }
-          ]
-        }
+            { text: "Hyphen (-)", value: "-" },
+            { text: "Underscore (_)", value: "_" },
+          ],
+        },
       },
       schema: {
-        default_value: '-'
-      }
+        default_value: "-",
+      },
     },
     {
-      field: 'lowercase',
-      name: 'Lowercase',
-      type: 'boolean',
+      field: "lowercase",
+      name: "Lowercase",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Convert to lowercase'
-        }
+          label: "Convert to lowercase",
+        },
       },
       schema: {
-        default_value: true
-      }
+        default_value: true,
+      },
     },
     {
-      field: 'placeholder',
-      name: 'Placeholder',
-      type: 'string',
+      field: "placeholder",
+      name: "Placeholder",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'input',
+        width: "half",
+        interface: "input",
         options: {
-          placeholder: 'Enter placeholder text...'
-        }
-      }
+          placeholder: "Enter placeholder text...",
+        },
+      },
     },
     {
-      field: 'custom_empty_message',
-      name: 'Custom Empty Error Message',
-      type: 'string',
+      field: "custom_empty_message",
+      name: "Custom Empty Error Message",
+      type: "string",
       meta: {
-        width: 'full',
-        interface: 'input',
+        width: "full",
+        interface: "input",
         options: {
-          placeholder: 'Slug cannot be empty. Please enter a valid slug.'
-        }
-      }
+          placeholder: "Slug cannot be empty. Please enter a valid slug.",
+        },
+      },
     },
     {
-      field: 'custom_format_message',
-      name: 'Custom Format Error Message',
-      type: 'string',
+      field: "custom_format_message",
+      name: "Custom Format Error Message",
+      type: "string",
       meta: {
-        width: 'full',
-        interface: 'input',
+        width: "full",
+        interface: "input",
         options: {
-          placeholder: 'Slug must contain only lowercase letters, numbers, hyphens, and forward slashes.'
-        }
-      }
+          placeholder:
+            "Slug must contain only lowercase letters, numbers, hyphens, and forward slashes.",
+        },
+      },
     },
     {
-      field: 'allow_duplicates',
-      name: 'Allow Duplicate Slugs',
-      type: 'boolean',
+      field: "allow_duplicates",
+      name: "Allow Duplicate Slugs",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Allow duplicate slugs across collections'
-        }
+          label: "Allow duplicate slugs across collections",
+        },
       },
       schema: {
-        default_value: false
-      }
+        default_value: false,
+      },
     },
     {
-      field: 'auto_update_mode',
-      name: 'Auto Update Mode',
-      type: 'string',
+      field: "auto_update_mode",
+      name: "Auto Update Mode",
+      type: "string",
       meta: {
-        width: 'half',
-        interface: 'select-dropdown',
+        width: "half",
+        interface: "select-dropdown",
         options: {
           choices: [
-            { text: 'Disabled', value: 'disabled' },
-            { text: 'On Change', value: 'change' },
-            { text: 'On Blur', value: 'blur' },
-            { text: 'On Focus', value: 'focus' },
-            { text: 'Real-time', value: 'realtime' }
-          ]
-        }
+            { text: "Disabled", value: "disabled" },
+            { text: "On Change", value: "change" },
+            { text: "On Blur", value: "blur" },
+            { text: "On Focus", value: "focus" },
+            { text: "Real-time", value: "realtime" },
+          ],
+        },
       },
       schema: {
-        default_value: 'change'
-      }
+        default_value: "change",
+      },
     },
     {
-      field: 'preserve_existing',
-      name: 'Preserve Existing Values',
-      type: 'boolean',
+      field: "preserve_existing",
+      name: "Preserve Existing Values",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Preserve existing URL values when source changes'
-        }
+          label: "Preserve existing URL values when source changes",
+        },
       },
       schema: {
-        default_value: false
-      }
+        default_value: false,
+      },
     },
     {
-      field: 'update_delay',
-      name: 'Update Delay (ms)',
-      type: 'integer',
+      field: "update_delay",
+      name: "Update Delay (ms)",
+      type: "integer",
       meta: {
-        width: 'half',
-        interface: 'input',
+        width: "half",
+        interface: "input",
         options: {
-          placeholder: '100'
-        }
+          placeholder: "100",
+        },
       },
       schema: {
-        default_value: 100
-      }
+        default_value: 100,
+      },
     },
     {
-      field: 'show_preview_link',
-      name: 'Show Preview Link',
-      type: 'boolean',
+      field: "show_preview_link",
+      name: "Show Preview Link",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Display a preview link under the field'
-        }
+          label: "Display a preview link under the field",
+        },
       },
       schema: {
-        default_value: true
-      }
+        default_value: true,
+      },
     },
     {
-      field: 'preview_base_url',
-      name: 'Preview Base URL',
-      type: 'string',
+      field: "preview_base_url",
+      name: "Preview Base URL",
+      type: "string",
       meta: {
-        width: 'full',
-        interface: 'input',
+        width: "full",
+        interface: "input",
         options: {
-          placeholder: 'https://example.com'
-        }
-      }
+          placeholder: "https://example.com",
+        },
+      },
     },
     {
-      field: 'preview_open_in_new_tab',
-      name: 'Open Preview in New Tab',
-      type: 'boolean',
+      field: "preview_open_in_new_tab",
+      name: "Open Preview in New Tab",
+      type: "boolean",
       meta: {
-        width: 'half',
-        interface: 'boolean',
+        width: "half",
+        interface: "boolean",
         options: {
-          label: 'Open preview link in a new browser tab'
-        }
+          label: "Open preview link in a new browser tab",
+        },
       },
       schema: {
-        default_value: true
-      }
-    }
-  ]
+        default_value: true,
+      },
+    },
+  ],
 });
