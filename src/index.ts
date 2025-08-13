@@ -11,6 +11,24 @@ export default defineInterface({
   group: 'standard',
   options: [
     {
+      field: 'generation_mode',
+      name: 'Generation Mode',
+      type: 'string',
+      meta: {
+        width: 'half',
+        interface: 'select-dropdown',
+        options: {
+          choices: [
+            { text: 'Slug', value: 'slug' },
+            { text: 'UUID v4', value: 'uuid' }
+          ]
+        }
+      },
+      schema: {
+        default_value: 'slug'
+      }
+    },
+    {
       field: 'select_collection',
       name: 'Source Collection',
       type: 'string',

@@ -63,32 +63,38 @@ cp -r . /path/to/your/directus/extensions/interfaces/slug-generator/
 
 ### 2. Configure the Interface
 
-```javascript
+```json
 {
-  "source_field": "title",           // Field to generate slug from
-  "auto_update": true,               // Enable automatic updates
-  "update_mode": "change",           // When to update: change, blur, focus, realtime
-  "preserve_existing": false,        // Keep existing slugs when source changes
-  "separator": "-",                  // Character to replace spaces/special chars
-  "lowercase": true,                 // Convert to lowercase
-  "update_delay": 100,               // Delay before update (ms)
-  "validation": {
-    "unique": true,                  // Ensure slug uniqueness
-    "format": "url-friendly"         // URL format validation
-  }
+  "select_field": "title",
+  "generation_mode": "slug",            // "slug" | "uuid"
+  "auto": true,                          // Auto-generate on mount/changes
+  "required": true,
+  "separator": "-",
+  "lowercase": true,
+  "placeholder": "Enter a slug or url...",
+  "custom_empty_message": null,
+  "custom_format_message": null,
+  "custom_unique_message": null,
+  "allow_duplicates": false,             // If false, checks uniqueness in the collection
+  "auto_update_mode": "change",         // "disabled" | "change" | "blur" | "focus" | "realtime"
+  "preserve_existing": false,            // Keep existing value when source changes
+  "update_delay": 100,
+  "show_preview_link": true,
+  "preview_base_url": "https://example.com",
+  "preview_open_in_new_tab": true
 }
 ```
 
 ## ✨ Features
 
-- **🔄 Automatic Slug Generation**: Generate slugs from any field in your collection
-- **⚡ Auto-Update Functionality**: Automatically update URL values when source fields change
-- **🎛️ Multiple Update Modes**: Choose when to trigger updates (on change, blur, focus, or real-time)
-- **💾 Preserve Existing Values**: Option to keep existing URLs when source content changes
-- **📅 Date Field Support**: Special handling for date fields with various formats
-- **🌍 Multi-language Support**: Transliteration for special characters and accents
-- **✅ Validation**: Built-in validation for URL format and uniqueness
-- **⚙️ Customizable**: Configurable separators, case sensitivity, and error messages
+- **🔄 Automatic generation** from any source field
+- **🆔 UUID mode**: generate RFC4122 v4 values when desired
+- **⚡ Auto-update** with multiple trigger modes
+- **💾 Preserve existing** value on source changes
+- **🔗 Preview link** rendering with configurable base URL and target
+- **📅 Date awareness** when the source is a date-like field
+- **🌍 Transliteration** for Cyrillic, German/Nordic, and broader Latin characters
+- **✅ Validation** for URL/slug format and optional uniqueness check
 
 ## 📋 Usage Examples
 
@@ -99,9 +105,9 @@ cp -r . /path/to/your/directus/extensions/interfaces/slug-generator/
 // Fields: title, slug, content, published_date
 
 {
-  "source_field": "title",
-  "auto_update": true,
-  "update_mode": "change",
+  "select_field": "title",
+  "auto": true,
+  "auto_update_mode": "change",
   "separator": "-",
   "lowercase": true
 }
@@ -110,24 +116,24 @@ cp -r . /path/to/your/directus/extensions/interfaces/slug-generator/
 // Output: "my-amazing-blog-post"
 ```
 
-### Article with Date
+### UUID mode
 
-```javascript
-// Collection: articles
-// Fields: title, slug, publish_date, author
-
+```json
 {
-  "source_field": "title",
-  "auto_update": true,
-  "update_mode": "blur",
-  "separator": "-",
-  "lowercase": true,
-  "include_date": true,
-  "date_format": "YYYY-MM-DD"
+  "generation_mode": "uuid",
+  "auto": true,
+  "allow_duplicates": true
 }
+```
 
-// Input: "Breaking News Story" + Date: 2024-01-15
-// Output: "2024-01-15-breaking-news-story"
+### Preview link
+
+```json
+{
+  "show_preview_link": true,
+  "preview_base_url": "https://example.com/blog",
+  "preview_open_in_new_tab": true
+}
 ```
 
 ### Product Catalog
@@ -153,46 +159,27 @@ cp -r . /path/to/your/directus/extensions/interfaces/slug-generator/
 
 ### Update Modes
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| `disabled` | No automatic updates | Manual slug entry only |
-| `change` | Update when source field changes | Real-time updates |
-| `blur` | Update when source field loses focus | Less aggressive updates |
-| `focus` | Update when source field gains focus | On-demand updates |
-| `realtime` | Update continuously as user types | Live preview |
+| Mode | Description |
+|------|-------------|
+| `disabled` | No automatic updates |
+| `change` | Update on input/change events |
+| `blur` | Update when source field loses focus |
+| `focus` | Update when source field gains focus |
+| `realtime` | Same as `change` (live typing) |
 
 ### Configuration Options
 
-```javascript
-{
-  "auto_update": true,               // Enable/disable auto-updates
-  "update_mode": "change",           // When to trigger updates
-  "preserve_existing": false,        // Keep existing slugs
-  "update_delay": 100,               // Delay before update (ms)
-  "validation": {
-    "unique": true,                  // Ensure uniqueness
-    "format": "url-friendly",        // URL format validation
-    "min_length": 3,                 // Minimum slug length
-    "max_length": 100                // Maximum slug length
-  }
-}
-```
+See the JSON block above for all available options and defaults.
 
 ## 🌍 Internationalization
 
-The extension supports transliteration for various languages:
+Built-in transliteration covers:
 
-### Supported Languages
+- **Cyrillic (Russian)**
+- **German/Nordic** (ä→ae, ö→oe, ü→ue, ß→ss, å→a, æ→ae, ø→o)
+- **Broad Latin accents** (á, ç, ñ, etc.)
 
-- **English**: Standard ASCII characters
-- **European**: é → e, ñ → ny, ä → ae, ö → oe, ß → ss
-- **Cyrillic**: а → a, б → b, в → v, г → g
-- **Greek**: α → a, β → b, γ → g, δ → d
-- **Arabic**: ا → a, ب → b, ت → t, ث → th
-- **Chinese**: Basic transliteration support
-- **Japanese**: Hiragana/Katakana to Latin
-
-### Custom Transliteration
+### Custom Transliteration (pre-processing example)
 
 ```javascript
 {
@@ -208,28 +195,9 @@ The extension supports transliteration for various languages:
 
 ## ✅ Validation
 
-### Built-in Validation
-
-- **URL Format**: Ensures valid URL structure
-- **Uniqueness**: Checks for duplicate slugs (configurable)
-- **Length**: Configurable minimum and maximum lengths
-- **Characters**: Validates allowed characters
-- **Status-based**: Respects draft/published status
-
-### Custom Validation
-
-```javascript
-{
-  "validation": {
-    "unique": true,
-    "format": "url-friendly",
-    "min_length": 3,
-    "max_length": 100,
-    "allowed_chars": "a-z0-9-",
-    "custom_validator": "function(slug) { return slug.length > 0; }"
-  }
-}
-```
+- **Format**: Accepts full URLs (http/https) or slugs. For URLs, dots/colons/slashes are preserved and cleaned. For slugs, letters, numbers, hyphens and slashes are allowed and normalized.
+- **Uniqueness**: If `allow_duplicates` is false, the value is checked for uniqueness in the current collection (excluding the current item by primary key).
+- **Draft bypass**: If your item status is `draft`, validation is skipped until publishing.
 
 ## 🛠️ Development
 
@@ -267,23 +235,32 @@ npm run build:dev
 
 ### Interface Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `source_field` | string | - | Field to generate slug from |
-| `auto_update` | boolean | true | Enable automatic updates |
-| `update_mode` | string | 'change' | When to trigger updates |
-| `preserve_existing` | boolean | false | Keep existing slugs |
-| `separator` | string | '-' | Character to replace spaces |
-| `lowercase` | boolean | true | Convert to lowercase |
-| `update_delay` | number | 100 | Delay before update (ms) |
+| Option | Type | Default |
+|--------|------|---------|
+| `select_field` | string | `title` |
+| `generation_mode` | 'slug' | `slug` |
+| `auto` | boolean | `true` |
+| `required` | boolean | `true` |
+| `separator` | string | `-` |
+| `lowercase` | boolean | `true` |
+| `placeholder` | string | `Enter a slug or url...` |
+| `custom_empty_message` | string|null | `null` |
+| `custom_format_message` | string|null | `null` |
+| `custom_unique_message` | string|null | `null` |
+| `allow_duplicates` | boolean | `false` |
+| `auto_update_mode` | string | `change` |
+| `preserve_existing` | boolean | `false` |
+| `update_delay` | number | `100` |
+| `show_preview_link` | boolean | `true` |
+| `preview_base_url` | string | `''` |
+| `preview_open_in_new_tab` | boolean | `true` |
 
-### Events
+### Emits
 
-| Event | Description | Parameters |
-|-------|-------------|------------|
-| `slug:generated` | Slug was generated | `{ slug, source, field }` |
-| `slug:updated` | Slug was updated | `{ oldSlug, newSlug, field }` |
-| `slug:error` | Error occurred | `{ error, field }` |
+| Event | Payload |
+|-------|---------|
+| `input` | `string` (the current value) |
+| `validation` | `boolean` (is valid) |
 
 ## 🤝 Contributing
 

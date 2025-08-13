@@ -35,7 +35,7 @@
         </v-button>
 
         <v-button
-          v-if="selectedSourceField && auto"
+          v-if="(selectedSourceField && auto) || props.generation_mode === 'uuid'"
           v-tooltip="'Regenerate from source'"
           x-small
           secondary
@@ -87,6 +87,7 @@
     type StatusValue
   } from './utils/fieldDetection';
   import { createSlug } from './utils/transliteration';
+  import { generateUUIDv4 } from './utils/uuid';
 
   // Type definitions
   type SlugValue = string | null;
@@ -100,7 +101,8 @@
     disabled: false,
     select_collection: null,
     select_field: null,
-                                           auto: true,
+    generation_mode: 'slug',
+    auto: true,
     required: true,
     separator: '-',
     lowercase: true,
@@ -143,6 +145,7 @@
     disabled?: boolean;
     select_collection?: CollectionName | null;
     select_field?: FieldName | null;
+    generation_mode?: 'slug' | 'uuid';
     auto?: boolean;
     required?: boolean;
     separator?: string;
@@ -285,6 +288,13 @@
     const inputValue = isString(value) ? value
       : value && typeof value === 'object' && 'target' in value && isHTMLInputElement(value.target) ? value.target.value : '';
 
+    if (props.generation_mode === 'uuid') {
+      internalValue.value = inputValue;
+      await updateValidationState();
+      emit('input', internalValue.value);
+      return;
+    }
+
     if (inputValue === '' && props.auto && selectedSourceField.value) {
       await fetchSourceValue();
       if (sourceValue.value) {
@@ -342,13 +352,16 @@
   };
 
   const regenerateSlug = async (): Promise<void> => {
+    if (props.generation_mode === 'uuid') {
+      internalValue.value = generateUUIDv4();
+      await updateValidationState();
+      emit('input', internalValue.value);
+      return;
+    }
+
     const fieldName = props.select_field || 'title';
-    console.log('fieldName', fieldName);
-
     const processedValue = getProcessedFieldValue(fieldName);
-
     if (processedValue) {
-      console.log('Found processed field value:', processedValue);
       sourceValue.value = processedValue;
       const slugOptions: SlugOptions = {
         separator: props.separator,
@@ -357,10 +370,7 @@
       internalValue.value = createSlug(processedValue, slugOptions);
       await updateValidationState();
       emit('input', internalValue.value);
-      return;
     }
-
-    console.warn('Could not regenerate slug: No field value found in form.');
   };
 
   // Auto-updater management functions
@@ -370,12 +380,12 @@
       autoUpdater = null;
     }
 
-    if (props.auto_update_mode === 'disabled' || !props.select_field) {
+    if (props.auto_update_mode === 'disabled' || (!props.select_field && props.generation_mode !== 'uuid')) {
       return;
     }
 
     const config: AutoUpdateConfig = {
-      sourceField: props.select_field,
+      sourceField: props.select_field || props.field,
       targetField: props.field,
       separator: props.separator,
       lowercase: props.lowercase,
@@ -383,7 +393,8 @@
       preserveExisting: props.preserve_existing,
       updateOnChange: props.auto_update_mode === 'change' || props.auto_update_mode === 'realtime',
       updateOnBlur: props.auto_update_mode === 'blur',
-      updateOnFocus: props.auto_update_mode === 'focus'
+      updateOnFocus: props.auto_update_mode === 'focus',
+      generationMode: props.generation_mode === 'uuid' ? 'uuid' : 'slug'
     };
 
     autoUpdater = createAutoUpdater(config);
@@ -435,18 +446,23 @@
 
   onMounted(async (): Promise<void> => {
     if ((!internalValue.value || internalValue.value === '') && props.auto) {
-      const fieldName = props.select_field || 'title';
-      const processedValue = getProcessedFieldValue(fieldName);
-
-      if (processedValue) {
-        sourceValue.value = processedValue;
-        const slugOptions: SlugOptions = {
-          separator: props.separator,
-          lowercase: props.lowercase
-        };
-        internalValue.value = createSlug(processedValue, slugOptions);
+      if (props.generation_mode === 'uuid') {
+        internalValue.value = generateUUIDv4();
         await updateValidationState();
         emit('input', internalValue.value);
+      } else {
+        const fieldName = props.select_field || 'title';
+        const processedValue = getProcessedFieldValue(fieldName);
+        if (processedValue) {
+          sourceValue.value = processedValue;
+          const slugOptions: SlugOptions = {
+            separator: props.separator,
+            lowercase: props.lowercase
+          };
+          internalValue.value = createSlug(processedValue, slugOptions);
+          await updateValidationState();
+          emit('input', internalValue.value);
+        }
       }
     }
 
@@ -495,6 +511,7 @@
   watch(
     (): string | null => {
       if (props.auto) {
+        if (props.generation_mode === 'uuid') return null;
         const fieldName = props.select_field || 'title';
         return getProcessedFieldValue(fieldName);
       }

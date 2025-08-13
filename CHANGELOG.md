@@ -1,3 +1,9 @@
+## [1.1.3] - 2025-08-13
+
+### Changed
+- README updated to reflect current props and behavior (UUID mode, preview link, auto-update modes, transliteration map, validation and emits)
+- Docs examples updated (`select_field`, `auto_update_mode`, uniqueness logic)
+
 ## [1.1.2] - 2025-08-13
 
 ### Added

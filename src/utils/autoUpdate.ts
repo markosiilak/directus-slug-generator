@@ -1,4 +1,5 @@
 import { createSlug } from './transliteration';
+import { generateUUIDv4 } from './uuid';
 import { getProcessedFieldValue, type FieldName } from './fieldDetection';
 
 export interface AutoUpdateConfig {
@@ -11,6 +12,7 @@ export interface AutoUpdateConfig {
   updateOnChange?: boolean;
   updateOnBlur?: boolean;
   updateOnFocus?: boolean;
+  generationMode?: 'slug' | 'uuid';
 }
 
 export interface AutoUpdateResult {
@@ -38,6 +40,7 @@ export class AutoUpdater {
       updateOnChange: true,
       updateOnBlur: false,
       updateOnFocus: false,
+      generationMode: 'slug',
       ...config
     };
   }
@@ -134,18 +137,23 @@ export class AutoUpdater {
 
       let newValue: string | null = null;
       
-      if (sourceValue) {
-        const slugOptions = {
-          separator: this.config.separator || '-',
-          lowercase: this.config.lowercase !== false
-        };
-        
-        newValue = createSlug(sourceValue, slugOptions);
+      if (this.config.generationMode === 'uuid') {
+        newValue = generateUUIDv4();
         this.setFieldValue(targetElement, newValue);
-        this.lastSourceValue = sourceValue;
+        this.lastSourceValue = '__uuid__';
       } else {
-        this.setFieldValue(targetElement, '');
-        this.lastSourceValue = null;
+        if (sourceValue) {
+          const slugOptions = {
+            separator: this.config.separator || '-',
+            lowercase: this.config.lowercase !== false
+          };
+          newValue = createSlug(sourceValue, slugOptions);
+          this.setFieldValue(targetElement, newValue);
+          this.lastSourceValue = sourceValue;
+        } else {
+          this.setFieldValue(targetElement, '');
+          this.lastSourceValue = null;
+        }
       }
 
       return {
