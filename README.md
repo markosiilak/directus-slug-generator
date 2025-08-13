@@ -26,8 +26,6 @@ npm install directus-slug-generator
 # Install the latest version
 npm install directus-slug-generator
 
-# Install a specific version
-npm install directus-slug-generator@1.1.0
 ```
 
 ### Method 2: Directus Extensions Directory

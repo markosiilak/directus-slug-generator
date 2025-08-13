@@ -205,6 +205,48 @@ export default defineInterface({
       schema: {
         default_value: 100
       }
+    },
+    {
+      field: 'show_preview_link',
+      name: 'Show Preview Link',
+      type: 'boolean',
+      meta: {
+        width: 'half',
+        interface: 'boolean',
+        options: {
+          label: 'Display a preview link under the field'
+        }
+      },
+      schema: {
+        default_value: true
+      }
+    },
+    {
+      field: 'preview_base_url',
+      name: 'Preview Base URL',
+      type: 'string',
+      meta: {
+        width: 'full',
+        interface: 'input',
+        options: {
+          placeholder: 'https://example.com'
+        }
+      }
+    },
+    {
+      field: 'preview_open_in_new_tab',
+      name: 'Open Preview in New Tab',
+      type: 'boolean',
+      meta: {
+        width: 'half',
+        interface: 'boolean',
+        options: {
+          label: 'Open preview link in a new browser tab'
+        }
+      },
+      schema: {
+        default_value: true
+      }
     }
   ]
 });
