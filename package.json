@@ -1,6 +1,6 @@
 {
   "name": "directus-slug-generator",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Advanced slug generator interface for Directus CMS with auto-update functionality",
   "keywords": [
     "directus",
