@@ -240,16 +240,6 @@ npm run build:dev
 | `input` | `string` (the current value) |
 | `validation` | `boolean` (is valid) |
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: [GitHub Wiki](https://github.com/markosiilak/directus-slug-generator/wiki)
-- **Issues**: [GitHub Issues](https://github.com/markosiilak/directus-slug-generator/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/markosiilak/directus-slug-generator/discussions)
-
 ## 🙏 Acknowledgments
 
 - Built for [Directus](https://directus.io/)
