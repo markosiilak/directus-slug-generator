@@ -233,42 +233,12 @@ npm run build:dev
 
 ## 📚 API Reference
 
-### Interface Options
-
-| Option | Type | Default |
-|--------|------|---------|
-| `select_field` | string | `title` |
-| `generation_mode` | 'slug' | `slug` |
-| `auto` | boolean | `true` |
-| `required` | boolean | `true` |
-| `separator` | string | `-` |
-| `lowercase` | boolean | `true` |
-| `placeholder` | string | `Enter a slug or url...` |
-| `custom_empty_message` | string|null | `null` |
-| `custom_format_message` | string|null | `null` |
-| `custom_unique_message` | string|null | `null` |
-| `allow_duplicates` | boolean | `false` |
-| `auto_update_mode` | string | `change` |
-| `preserve_existing` | boolean | `false` |
-| `update_delay` | number | `100` |
-| `show_preview_link` | boolean | `true` |
-| `preview_base_url` | string | `''` |
-| `preview_open_in_new_tab` | boolean | `true` |
-
 ### Emits
 
 | Event | Payload |
 |-------|---------|
 | `input` | `string` (the current value) |
 | `validation` | `boolean` (is valid) |
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
 
 ## 📄 License
 
