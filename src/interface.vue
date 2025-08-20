@@ -35,8 +35,8 @@
         </v-button>
 
         <v-button
-          v-if="(selectedSourceField && auto) || props.generation_mode === 'uuid'"
-          v-tooltip="'Regenerate from source'"
+          v-if="!disabled && (props.generation_mode === 'uuid' || selectedSourceField || props.select_field)"
+          v-tooltip="props.generation_mode === 'uuid' ? 'Generate new UUID' : 'Regenerate from source'"
           x-small
           secondary
           icon
@@ -183,7 +183,7 @@
   const { items: itemsStore } = useStores();
 
   // Reactive state with proper typing
-  const internalValue: Ref<SlugValue> = ref(toRef(props, 'value').value || '');
+  const internalValue: Ref<SlugValue> = ref(props.value || '');
   const isValid: Ref<ValidationState> = ref(true);
   const validationMessage: Ref<string> = ref('');
   const sourceValue: Ref<string> = ref('');
@@ -348,10 +348,21 @@
   });
 
   const fetchSourceValue = async (): Promise<void> => {
-  // Implementation for fetching source value
+    if (!selectedSourceField.value) return;
+    
+    const processedValue = getProcessedFieldValue(selectedSourceField.value);
+    if (processedValue) {
+      sourceValue.value = processedValue;
+    }
   };
 
   const regenerateSlug = async (): Promise<void> => {
+    console.log('Regenerating slug...', { 
+      generation_mode: props.generation_mode, 
+      select_field: props.select_field,
+      selectedSourceField: selectedSourceField.value 
+    });
+
     if (props.generation_mode === 'uuid') {
       internalValue.value = generateUUIDv4();
       await updateValidationState();
@@ -359,17 +370,48 @@
       return;
     }
 
-    const fieldName = props.select_field || 'title';
+    // Try to get source field value
+    const fieldName = selectedSourceField.value || props.select_field || 'title';
+    console.log('Looking for source field:', fieldName);
+    
     const processedValue = getProcessedFieldValue(fieldName);
+    console.log('Processed value from source field:', processedValue);
+    
     if (processedValue) {
       sourceValue.value = processedValue;
       const slugOptions: SlugOptions = {
         separator: props.separator,
         lowercase: props.lowercase
       };
-      internalValue.value = createSlug(processedValue, slugOptions);
+      const newSlug = createSlug(processedValue, slugOptions);
+      console.log('Generated new slug:', newSlug);
+      
+      internalValue.value = newSlug;
       await updateValidationState();
       emit('input', internalValue.value);
+    } else {
+      console.warn('No source value found for field:', fieldName);
+      
+      // Try common field names as fallback
+      const fallbackFields = ['title', 'name', 'heading', 'label'];
+      for (const fallbackField of fallbackFields) {
+        const fallbackValue = getProcessedFieldValue(fallbackField);
+        if (fallbackValue) {
+          console.log(`Using fallback field "${fallbackField}" with value:`, fallbackValue);
+          sourceValue.value = fallbackValue;
+          const slugOptions: SlugOptions = {
+            separator: props.separator,
+            lowercase: props.lowercase
+          };
+          const newSlug = createSlug(fallbackValue, slugOptions);
+          internalValue.value = newSlug;
+          await updateValidationState();
+          emit('input', internalValue.value);
+          return;
+        }
+      }
+      
+      console.error('No suitable source field found for slug generation');
     }
   };
 

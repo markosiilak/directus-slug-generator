@@ -1,3 +1,19 @@
+## [1.1.4] - 2025-01-XX
+
+### Fixed
+- **Regenerate Button**: Fixed issue where clicking the regenerate slug button didn't generate a new slug
+- **Field Detection**: Significantly improved field detection for translation fields, relation fields, and various Directus field types
+- **Source Value Extraction**: Enhanced value extraction logic to handle contenteditable elements, nested inputs, and Vue components
+- **Button Visibility**: Fixed regenerate button visibility conditions to show more consistently
+- **Debug Logging**: Added comprehensive debug logging to help troubleshoot field detection issues
+- **Fallback Mechanism**: Improved fallback field detection when primary source field is not found
+- **Vue Reactivity**: Fixed reactivity warning in component initialization
+
+### Enhanced
+- **Field Selectors**: Added support for translation interfaces, many-to-any fields, and relation field patterns
+- **Error Handling**: Better error messages and debugging information in console
+- **Value Processing**: Improved handling of empty values and whitespace trimming
+
 ## [1.1.3] - 2025-08-13
 
 ### Changed
