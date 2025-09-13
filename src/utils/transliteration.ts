@@ -68,6 +68,16 @@ export const transliterationMap: { [key: string]: string } = {
   Э: "E",
   Ю: "Yu",
   Я: "Ya",
+  // Ukrainian (added by YuriiKosiy for Ukrainian language)
+  є: "ye",
+  ї: "yi",
+  і: "i",
+  ґ: "g",
+  // Uppercase Ukrainian (added by YuriiKosiy)
+  Є: "Ye",
+  Ї: "Yi",
+  І: "I",
+  Ґ: "G",
   // German and Nordic (consolidated)
   ä: "ae",
   ö: "oe",
