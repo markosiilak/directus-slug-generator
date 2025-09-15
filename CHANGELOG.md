@@ -1,3 +1,8 @@
+## [1.1.5] - 2025-01-XX
+
+### Fixed
+- **Package Publishing**: Updated package version and prepared for npm publishing
+
 ## [1.1.4] - 2025-01-XX
 
 ### Fixed
